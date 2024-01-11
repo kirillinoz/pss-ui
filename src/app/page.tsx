@@ -1,113 +1,172 @@
-import Image from 'next/image'
+"use client";
+import FilmCard from "@/components/custom/FilmCard";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { getCollection } from "@/scripts/get";
+import { uploadCover, uploadTitle, uploadVideo } from "@/scripts/upload";
+import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 
 export default function Home() {
+  const [collection, setCollection] = useState<any>([]);
+
+  const [isProgressBar, setIsProgressBar] = useState(false);
+  const [progress, setProgress] = useState<number>(0);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    getCollection().then((collection) => setCollection(collection));
+  }, []);
+
+  const handleAddMovie = async (e: any) => {
+    e.preventDefault();
+    const title = e.target.title.value;
+    const cover = coverInputRef.current?.files?.[0];
+    const video = videoInputRef.current?.files?.[0];
+    if (!cover || !video) return alert("Please select a cover image and video");
+
+    // Close dialog and reset form
+    setIsDialogOpen(false);
+    e.target.reset();
+    coverInputRef.current.value = "";
+    videoInputRef.current.value = "";
+
+    // Send to server
+    setIsProgressBar(true);
+    setProgress(0);
+    const titleData = await uploadTitle(title);
+    setProgress(titleData.progress);
+    const coverData = await uploadCover(titleData.id, cover);
+    setProgress(coverData.progress);
+    const videoData = await uploadVideo(titleData.id, video);
+    setProgress(videoData.progress);
+
+    // Reset progress bar
+    setProgress(0);
+    setIsProgressBar(false);
+
+    // Fetch new collection
+    const collection = await getCollection();
+    setCollection(collection);
+  };
+
+  const refreshCollection = async () => {
+    const collection = await getCollection();
+    setCollection(collection);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <main className="flex min-h-screen items-center flex-col p-8 xs:p-16 sm:p-24">
+        <div className="z-10 max-w-5xl w-full items-center justify-between">
+          <div className="flex flex-col sm:flex-row justify-between items-center">
+            <h1 className="text-2xl">Your collection</h1>
+            <div className="flex flex-col sm:flex-row w-full sm:w-fit">
+              <DialogTrigger asChild>
+                <Button className="mt-12 sm:mr-3 sm:mt-0">New Movie</Button>
+              </DialogTrigger>
+              <Button
+                className="mt-3 sm:mt-0"
+                variant="outline"
+                onClick={refreshCollection}
+              >
+                Refresh
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+        {isProgressBar && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="z-10 max-w-5xl w-full items-center justify-between mt-12"
+          >
+            <Progress value={progress} />
+          </motion.div>
+        )}
+        <div className="z-10 max-w-5xl w-full items-center justify-between mt-12">
+          <div className="flex justify-between">
+            <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {collection.map((movie: any, index: number) => (
+                <FilmCard
+                  key={index}
+                  id={movie.id}
+                  cover={`data:image/jpg;base64,${movie.cover}`}
+                  title={movie.title}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleAddMovie}>
+          <DialogHeader>
+            <DialogTitle>New Movie</DialogTitle>
+            <DialogDescription>
+              Add a new movie to your existing collection.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Title
+              </Label>
+              <Input
+                id="title"
+                placeholder="Pulp Fiction"
+                className="col-span-3"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="cover" className="text-right">
+                Cover
+              </Label>
+              <Input
+                id="cover"
+                type="file"
+                accept=".jpg"
+                className="col-span-3"
+                required
+                ref={coverInputRef}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="video" className="text-right">
+                Video
+              </Label>
+              <Input
+                id="video"
+                type="file"
+                accept=".mp4"
+                className="col-span-3"
+                required
+                ref={videoInputRef}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 }
