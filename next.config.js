@@ -5,7 +5,7 @@ const nextConfig = {
       {
         source: "/api/(.*)",
         //destination: "http://localhost:3001/api/:path*",
-        destination: "http://[af49:8982:876:51ff::1]:3001/api/$1", // for ipv6
+        destination: "http://localhost:8080/api/$1", // for ipv6
       },
     ];
   },
