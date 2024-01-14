@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async rewrites() {
+  async redirects() {
     return [
       {
-        source: "/api/(.*)",
-        //destination: "http://localhost:3001/api/:path*",
-        destination: "http://localhost:8080/api/$1", // for ipv6
+        source: "/api/:path*",
+        destination: "http://[af49:8982:876:51ff::1]:3001/api/:path*", // replace 'your-ipv6-address' with your actual IPv6 address
+        permanent: true,
       },
     ];
   },
