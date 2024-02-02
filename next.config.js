@@ -3,7 +3,7 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/api/:path*",
+        source: "http://localhost:3000/api/:path*",
         destination: "http://localhost:3001/api/:path*", // replace 'your-ipv6-address' with your actual IPv6 address
         permanent: true,
       },
