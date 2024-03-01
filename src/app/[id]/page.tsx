@@ -33,34 +33,39 @@ export default function VideoPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center flex-col p-8 xs:p-16 sm:p-24">
+    <>
       <Head>
         <title>{title}</title>
       </Head>
-      {!isLoading && (
-        <div className="z-10 max-w-5xl w-full items-center justify-between">
-          <div className="flex justify-between items-center">
-            <div className="flex">
+      <main className="flex min-h-screen items-center flex-col p-8 xs:p-16 sm:p-24">
+        {!isLoading && (
+          <div className="z-10 max-w-5xl w-full items-center justify-between">
+            <div className="flex justify-between items-center">
+              <div className="flex">
+                <Button
+                  onClick={() => router.push("/")}
+                  size="icon"
+                  variant="outline"
+                  className="mr-3"
+                >
+                  <ArrowBigLeft />
+                </Button>
+                <h1 className="text-2xl mt-1">{title}</h1>
+              </div>
               <Button
-                onClick={() => router.push("/")}
-                size="icon"
-                variant="outline"
-                className="mr-3"
+                onClick={() => handleDeleteVideo(id)}
+                variant="destructive"
               >
-                <ArrowBigLeft />
+                Delete Movie
               </Button>
-              <h1 className="text-2xl mt-1">{title}</h1>
             </div>
-            <Button onClick={() => handleDeleteVideo(id)} variant="destructive">
-              Delete Movie
-            </Button>
+            <VideoPlayer
+              className="mt-12 rounded-lg overflow-hidden"
+              videosrc={`http://${window.location.hostname}/api/video/${id}`}
+            />
           </div>
-          <VideoPlayer
-            className="mt-12 rounded-lg overflow-hidden"
-            videosrc={`http://${window.location.hostname}/api/video/${id}`}
-          />
-        </div>
-      )}
-    </main>
+        )}
+      </main>
+    </>
   );
 }
