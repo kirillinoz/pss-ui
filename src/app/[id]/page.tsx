@@ -53,7 +53,7 @@ export default function VideoPage() {
           </div>
           <VideoPlayer
             className="mt-12 rounded-lg overflow-hidden"
-            videosrc={`http://[af49:8982:876:51ff::1]:3000/api/video/${id}`}
+            videosrc={`http://${window.location.hostname}/api/video/${id}`}
           />
         </div>
       )}
