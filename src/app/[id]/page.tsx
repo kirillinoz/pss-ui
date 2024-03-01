@@ -22,7 +22,8 @@ export default function VideoPage() {
     fetchCollection();
   }, []);
 
-  const id = usePathname().split("/")[1];
+  const pathname = usePathname();
+  const id = pathname.split("/")[1];
   const title = collection.find((movie: any) => movie.id == id)?.title;
 
   const handleDeleteVideo = async (id: string) => {
@@ -52,7 +53,7 @@ export default function VideoPage() {
           </div>
           <VideoPlayer
             className="mt-12 rounded-lg overflow-hidden"
-            videosrc={`http://localhost:3001/api/video/${id}`}
+            videosrc={`http://[af49:8982:876:51ff::1]:3000/api/video/${id}`}
           />
         </div>
       )}
