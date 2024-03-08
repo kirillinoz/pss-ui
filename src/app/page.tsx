@@ -80,7 +80,7 @@ export default function Home() {
         <main className="flex min-h-screen items-center flex-col p-8 xs:p-16 sm:p-24">
           <div className="z-10 max-w-5xl w-full items-center justify-between">
             <div className="flex flex-col sm:flex-row justify-between items-center">
-              <h1 className="text-2xl">Your collection</h1>
+              <h1 className="text-2xl">Your Collection</h1>
               <div className="flex flex-col sm:flex-row w-full sm:w-fit">
                 <DialogTrigger asChild>
                   <Button className="mt-12 sm:mr-3 sm:mt-0">New Movie</Button>
