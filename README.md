@@ -1,3 +1,5 @@
+## About
+
 This repositroy contains frontend for a personal movie streaming service. Specifically developed for [InnoRoute](https://innoroute.com/) to be integrated with their [6Tree](https://innoroute.com/save/) network and MaxBox. This platform allows users to stream movies from their MaxBox to their personal devices once they are connected to the 6Tree network. This allows a safe and secure way to save and stream personal movie collection without the need for a cloud service or constantly carrying physical copies of your movies.
 
 This software is provided for MaxBox out of the box. If you want to install and use this software yourself, feel free to use the [guide](getting-started) underneath.
@@ -25,10 +27,11 @@ This is only the frontend part, the backend part can be found in the [resources]
 ## Features
 
 ### Add movie
+<img width="1217" alt="Xnapper-2024-04-12-11 27 49" src="https://github.com/kirillinoz/pss-ui/assets/63226427/3c9b47b6-14fb-4ce4-8783-082dfb006782">
 
 ### Remove movie
+<img width="1135" alt="Xnapper-2024-04-12-11 29 20" src="https://github.com/kirillinoz/pss-ui/assets/63226427/9bf2bf96-2c1f-4f1c-998d-b311e165a2c1">
 
-### Play movie
 
 ## Replenishment of Movies
 
